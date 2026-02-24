@@ -11,7 +11,11 @@ export class ActionExecutorService {
         private readonly handlers: BulkActionHandler[],
     ) { }
 
-    async execute(batch: BulkBatch): Promise<void> {
+    async execute(batch: BulkBatch): Promise<{
+        successIds: string[];
+        failedIds: string[];
+        skippedIds: string[];
+    }> {
 
         const actionType: ActionType = batch.bulkAction.actionType;
 
@@ -23,6 +27,6 @@ export class ActionExecutorService {
             throw new Error(`No handler found for action type: ${actionType}`);
         }
 
-        await handler.execute(batch);
+        return await handler.execute(batch);
     }
 }

@@ -11,5 +11,9 @@ export interface BulkActionHandler {
     /**
      * Executes the business logic for a batch
      */
-    execute(batch: BulkBatch): Promise<void>;
+    execute(batch: BulkBatch): Promise<{
+        successIds: string[];
+        failedIds: string[];
+        skippedIds: string[];
+    }>;
 }

@@ -16,7 +16,11 @@ export class ContactUpdateStatusHandler implements BulkActionHandler {
         return actionType === ActionType.UPDATE_STATUS;
     }
 
-    async execute(batch: BulkBatch): Promise<void> {
+    async execute(batch: BulkBatch): Promise<{
+        successIds: string[];
+        failedIds: string[];
+        skippedIds: string[];
+    }> {
 
         // const { offset, limit } = batch;
         const { status } = batch.bulkAction.payload;
@@ -35,11 +39,13 @@ export class ContactUpdateStatusHandler implements BulkActionHandler {
         // const ids = contacts.map(c => c.id);
 
         // 2️⃣ Perform bulk update
-        await this.contactService.bulkUpdateStatus(batch.ids, status);
+        const result = await this.contactService.bulkUpdateStatusDetailed(batch.ids, status);
 
         // 3️⃣ Update metrics
         batch.totalRecords = batch.ids.length;
-        batch.processedRecords = batch.ids.length;
-        batch.failedRecords = 0;
+        batch.processedRecords = result.successIds.length;
+        batch.failedRecords = result.failedIds.length;
+
+        return result;
     }
 }

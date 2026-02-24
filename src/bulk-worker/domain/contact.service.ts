@@ -25,4 +25,25 @@ export class ContactService {
             { status },
         );
     }
+
+    async bulkUpdateStatusDetailed(ids: string[], status: ContactStatus) {
+        const result = await this.repo
+            .createQueryBuilder()
+            .update(Contact)
+            .set({ status })
+            .where("id IN (:...ids)", { ids })
+            .returning("id")
+            .execute();
+
+        const updatedIds = result.raw.map(r => r.id);
+        const updatedSet = new Set(updatedIds);
+
+        const failedIds = ids.filter(id => !updatedSet.has(id));
+
+        return {
+            successIds: updatedIds,
+            failedIds,
+            skippedIds: [],
+        };
+    }
 }

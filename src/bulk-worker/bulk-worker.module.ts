@@ -11,10 +11,11 @@ import { BatchPollerService } from './batch/batch-poller.service';
 import { BatchLockService } from './batch/batch-lock.service';
 import { BatchExecutorService } from './batch/batch-executor.service';
 import { BulkActionStatusResolverService } from './batch/bulk-action-status-resolver.service';
+import { BulkActionLog } from './entities/bulk-action-logs.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([BulkBatch, BulkAction, Contact]),
+        TypeOrmModule.forFeature([BulkBatch, BulkAction, Contact, BulkActionLog]),
         ScheduleModule.forRoot(),
     ],
     providers: [
